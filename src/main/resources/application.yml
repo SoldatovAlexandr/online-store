@@ -1,0 +1,24 @@
+logging:
+  level:
+    edu.asoldatov: "${LOG_LEVEL:INFO}"
+    org.springframework: WARN
+  file:
+    name: target/log/application.log
+datasource:
+  db-online-store:
+    hikari:
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: "${DATASOURCE_URL}"
+      username: "${DATASOURCE_USERNAME}"
+      password: "${DATASOURCE_PASSWORD}"
+      connection-timeout: 60000
+      maximum-pool-size: 5
+spring:
+  liquibase:
+    enabled: true
+    change-log: classpath:db.changelog-master.xml
+    drop-first: false
+server:
+  port: 8080
+frontend:
+  host: "${FRONTEND_URL}"
