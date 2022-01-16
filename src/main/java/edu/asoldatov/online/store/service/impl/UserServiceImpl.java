@@ -1,10 +1,13 @@
 package edu.asoldatov.online.store.service.impl;
 
+import edu.asoldatov.online.store.api.dto.RoleDto;
 import edu.asoldatov.online.store.api.dto.UserDto;
+import edu.asoldatov.online.store.api.mapper.RoleMapper;
 import edu.asoldatov.online.store.api.mapper.UserMapper;
 import edu.asoldatov.online.store.common.UserRoles;
 import edu.asoldatov.online.store.exception.NotFoundException;
 import edu.asoldatov.online.store.mogel.Basket;
+import edu.asoldatov.online.store.mogel.Role;
 import edu.asoldatov.online.store.mogel.User;
 import edu.asoldatov.online.store.repository.BasketRepository;
 import edu.asoldatov.online.store.repository.RoleRepository;
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final RoleRepository roleRepository;
     private final BasketRepository basketRepository;
     private final UserMapper userMapper;
+    private final RoleMapper roleMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -54,8 +58,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDto add(UserDto userDto) {
         User user = userMapper.to(userDto);
-        user.setRoles(Set.of(roleRepository.findByName(UserRoles.ROLE_USER)
-                .orElseThrow(() -> new NotFoundException(String.format("Role with name [%s]", UserRoles.ROLE_USER.name())))));
+        user.setRoles(Set.of(findRoleByName(UserRoles.ROLE_USER)));
         userRepository.save(user);
         initBasket(user);
         return userMapper.to(user);
@@ -91,6 +94,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userMapper.to(user);
     }
 
+    @Transactional
+    @Override
+    public RoleDto addAdminRole(Long id) {
+        User user = findById(id);
+        Role admin = findRoleByName(UserRoles.ROLE_ADMIN);
+        user.getRoles().add(admin);
+        userRepository.save(user);
+        return roleMapper.to(admin);
+    }
+
+    @Transactional
+    @Override
+    public RoleDto deleteAdminRole(Long id) {
+        User user = findById(id);
+        Role admin = findRoleByName(UserRoles.ROLE_ADMIN);
+        user.getRoles().remove(admin);
+        userRepository.save(user);
+        return roleMapper.to(admin);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userRepository.findUserByLogin(login)
@@ -109,5 +132,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .user(user)
                 .build();
         basketRepository.save(basket);
+    }
+
+    private Role findRoleByName(UserRoles name) {
+        return roleRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException(String.format("Role with name [%s]", UserRoles.ROLE_USER.name())));
     }
 }

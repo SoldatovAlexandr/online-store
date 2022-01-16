@@ -56,7 +56,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(LOGIN_URL).permitAll();
         http.authorizeRequests().anyRequest().permitAll();
         http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(objectMapper, userDetailsService, userService), CustomAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(), CustomAuthenticationFilter.class);
     }
 
     @Bean

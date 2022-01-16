@@ -5,7 +5,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
-@ToString
 @Setter
 @Getter
 @NoArgsConstructor
@@ -17,20 +16,19 @@ import java.util.List;
 public class Basket {
 
     @Id
+    @GeneratedValue(generator = "h_sequence")
+    @SequenceGenerator(name = "h_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
+    @Column(name = "id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<BasketItem> items;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "basket")
-    private List<ProductItem> products;
-
-    public boolean add(ProductItem product) {
-        return products.add(product);
-    }
-
-    public boolean remove(ProductItem product) {
-        return products.remove(product);
+    public void clear(){
+        items.clear();
     }
 }

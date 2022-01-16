@@ -7,6 +7,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@ToString
 @Builder
 @Getter
 @NoArgsConstructor
@@ -25,6 +26,7 @@ public class ProductDto {
     private String genre;
     private Integer yearOfPublication;
     private boolean isActive;
+    private String image;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime createdAt;

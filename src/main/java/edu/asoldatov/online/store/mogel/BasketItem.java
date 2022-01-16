@@ -11,8 +11,8 @@ import javax.persistence.*;
 @Builder
 
 @Entity
-@Table(name = "product_item")
-public class ProductItem {
+@Table(name = "basket_item")
+public class BasketItem {
 
     @Id
     @GeneratedValue(generator = "h_sequence")
@@ -30,11 +30,4 @@ public class ProductItem {
     @JoinColumn(name = "basket_id", nullable = false)
     private Basket basket;
 
-    public void add() {
-        count++;
-    }
-
-    public void remove() {
-        count--;
-    }
 }

@@ -5,13 +5,14 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+@ToString
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductItemDto {
+public class BasketItemDto {
 
     private Long id;
 

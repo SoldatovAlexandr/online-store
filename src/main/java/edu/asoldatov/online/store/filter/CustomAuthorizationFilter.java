@@ -5,17 +5,12 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.asoldatov.online.store.mogel.User;
-import edu.asoldatov.online.store.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,9 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -40,10 +33,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     private final static String TOKEN_NAME = "Bearer";
     private final static String SECRET_KEY = "secret";
-
-    private final ObjectMapper objectMapper;
-    private final UserDetailsService userDetailsService;
-    private final UserService userService;
 
 
     @Override
@@ -65,9 +54,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(login, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    if (request.getServletPath().equals("/auth")) {
-                        check(request, response, login);
-                    }
                     filterChain.doFilter(request, response);
                 } catch (Exception e) {
                     log.error(e.getMessage());
@@ -81,29 +67,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
         }
-    }
-
-    private void check(HttpServletRequest request, HttpServletResponse response, String login) throws IOException {
-        UserDetails user= userDetailsService.loadUserByUsername(login);
-
-        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
-        String accessToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .withClaim("id", userService.find(user.getUsername()).getId())
-                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .sign(algorithm);
-        String refreshToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .sign(algorithm);
-        Map<String, String> tokens = Map.of("accessToken", accessToken,
-                "refreshToken", refreshToken);
-        response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
-        response.setHeader("Accept", APPLICATION_JSON_VALUE);
     }
 }
 
