@@ -3,8 +3,10 @@ package edu.asoldatov.online.store.service.impl;
 import edu.asoldatov.online.store.api.dto.ProductDto;
 import edu.asoldatov.online.store.api.mapper.ProductMapper;
 import edu.asoldatov.online.store.exception.NotFoundException;
+import edu.asoldatov.online.store.mogel.File;
 import edu.asoldatov.online.store.mogel.Genre;
 import edu.asoldatov.online.store.mogel.Product;
+import edu.asoldatov.online.store.repository.FileRepository;
 import edu.asoldatov.online.store.repository.GenreRepository;
 import edu.asoldatov.online.store.repository.ProductRepository;
 import edu.asoldatov.online.store.repository.specification.ProductSpecification;
@@ -26,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final TimeService timeService;
     private final GenreRepository genreRepository;
+    private final FileRepository fileRepository;
 
     @Override
     public ProductDto find(Long id) {
@@ -39,13 +42,16 @@ public class ProductServiceImpl implements ProductService {
         return products.map(productMapper::to);
     }
 
+    @Transactional
     @Override
     public ProductDto add(ProductDto productDto) {
         Product product = productMapper.to(productDto);
         Genre genre = genreRepository.findByName(productDto.getGenre());
+        File file = fileRepository.findById(productDto.getImage()).orElseThrow(NotFoundException::new);
         product.setGenre(genre);
         product.setCreatedAt(timeService.now());
         product.setActive(true);
+        product.setImage(file);
         productRepository.save(product);
         return productMapper.to(product);
     }
@@ -54,11 +60,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto update(ProductDto productDto, Long id) {
         Product product = findById(id);
+        Genre genre = genreRepository.findByName(productDto.getGenre());
+        File file = fileRepository.findById(productDto.getImage()).orElseThrow(NotFoundException::new);
         product.setAmount(productDto.getAmount());
         product.setAuthor(productDto.getAuthor());
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
         product.setAgeLimit(productDto.getAgeLimit());
+        product.setImage(file);
+        product.setGenre(genre);
         productRepository.save(product);
         return productMapper.to(product);
     }

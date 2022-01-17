@@ -19,6 +19,7 @@ public class ProductMapper {
                 .description(product.getDescription())
                 .createdAt(product.getCreatedAt())
                 .isActive(product.isActive())
+                .image(product.getImage().getId())
                 .build();
     }
 

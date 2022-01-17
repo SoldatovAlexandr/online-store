@@ -19,7 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
         @Spec(path = "yearOfPublication", spec = Equal.class),
         @Spec(path = "ageLimit", spec = GreaterThan.class),
         @Spec(path = "amount", spec = LessThan.class),
-        @Spec(path = "isActive", spec = Equal.class)
+        @Spec(path = "isActive", spec = Equal.class, defaultVal = "true")
 })
 public interface ProductSpecification extends Specification<Product> {
 }

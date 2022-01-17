@@ -1,5 +1,6 @@
 package edu.asoldatov.online.store.api.controller;
 
+import edu.asoldatov.online.store.api.dto.RoleDto;
 import edu.asoldatov.online.store.api.dto.UserDto;
 import edu.asoldatov.online.store.repository.specification.UserSpecification;
 import edu.asoldatov.online.store.service.UserService;
@@ -53,5 +54,17 @@ public class UserController {
     public void delete(final @PathVariable Long id) {
         log.info("Delete user by id [{}]", id);
         userService.delete(id);
+    }
+
+    @PostMapping("/{id}/roles/")
+    public RoleDto addAdminRole(final @PathVariable Long id) {
+        log.info("Add admin role for user [{}]", id);
+        return userService.addAdminRole(id);
+    }
+
+    @DeleteMapping("/{id}/roles/")
+    public RoleDto deleteAdminRole(final @PathVariable Long id) {
+        log.info("Delete admin role for user [{}]", id);
+        return userService.deleteAdminRole(id);
     }
 }

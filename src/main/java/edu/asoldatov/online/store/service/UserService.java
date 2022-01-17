@@ -1,5 +1,6 @@
 package edu.asoldatov.online.store.service;
 
+import edu.asoldatov.online.store.api.dto.RoleDto;
 import edu.asoldatov.online.store.api.dto.UserDto;
 import edu.asoldatov.online.store.mogel.User;
 import edu.asoldatov.online.store.repository.specification.UserSpecification;
@@ -20,4 +21,8 @@ public interface UserService {
     User findById(Long id);
 
     UserDto find(String userName);
+
+    RoleDto addAdminRole(Long id);
+
+    RoleDto deleteAdminRole(Long id);
 }

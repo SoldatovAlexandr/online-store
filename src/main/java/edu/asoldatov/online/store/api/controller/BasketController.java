@@ -20,18 +20,11 @@ public class BasketController {
         return basketService.findById(id);
     }
 
-    @PutMapping("/{id}/add/{productId}")
-    public BasketDto addProduct(final @PathVariable Long id,
-                                final @PathVariable Long productId) {
+    @PutMapping("/{id}")
+    public BasketDto update(final @PathVariable Long id,
+                            @RequestBody BasketDto basketDto) {
         log.info("Add basket by userId [{}]", id);
-        return basketService.addProduct(id, productId);
-    }
-
-    @PutMapping("/{id}/delete/{productId}")
-    public BasketDto deleteProduct(final @PathVariable Long id,
-                                   final @PathVariable Long productId) {
-        log.info("Delete basket by userId [{}]", id);
-        return basketService.deleteProduct(id, productId);
+        return basketService.update(id, basketDto);
     }
 
     @DeleteMapping("/{id}")

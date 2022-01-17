@@ -28,10 +28,9 @@ public class Product {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
-    /**
-     *  Изображение;
-     * https://yandex.ru/video/preview/?filmId=7451505946330528064&from=tabbar&parent-reqid=1639414109304080-6730104494224415987-sas3-0999-700-sas-l7-balancer-8080-BAL-1854&text=spring+boot+MultipartFile
-     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="file_id")
+    private File image;
 
     @Column(name = "description", nullable = false)
     private String description;
