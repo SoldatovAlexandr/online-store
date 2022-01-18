@@ -1,68 +1,46 @@
 package edu.asoldatov.online.store.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.asoldatov.online.store.filter.CustomAuthenticationFilter;
-import edu.asoldatov.online.store.filter.CustomAuthorizationFilter;
-import edu.asoldatov.online.store.service.UserService;
+import edu.asoldatov.online.store.service.MyOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-
 @Log4j2
 @Configuration
 @EnableWebSecurity
+@EnableOAuth2Sso
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final static String LOGIN_URL = "/api/login";
-
-    private final UserDetailsService userDetailsService;
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-    private final ObjectMapper objectMapper;
+    private final MyOAuth2UserService userService;
 
     @Value("${frontend.host}")
     private String frontendUrl;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-    }
-
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter =
-                new CustomAuthenticationFilter(authenticationManagerBean(), userService, objectMapper);
-        http.cors();
-        http.csrf().disable();
-        customAuthenticationFilter.setFilterProcessesUrl(LOGIN_URL);
-        http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().antMatchers(LOGIN_URL).permitAll();
-        http.authorizeRequests().anyRequest().permitAll();
-        http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), CustomAuthenticationFilter.class);
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+        http
+                .authorizeRequests(authorizeRequests -> authorizeRequests
+                        .anyRequest().permitAll()
+                )
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(userService))
+                )
+                .cors()
+                .and()
+                .csrf().disable();
     }
 
     @Bean
@@ -75,5 +53,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public RequestContextListener requestContextListener() {
+        return new RequestContextListener();
     }
 }

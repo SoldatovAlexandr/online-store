@@ -2,6 +2,7 @@ package edu.asoldatov.online.store.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import edu.asoldatov.online.store.common.AuthType;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -20,15 +21,11 @@ public class UserDto {
 
     private Long id;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NotBlank(message = "required.password.error")
-    @Size(max = 64, message = "long.password.error")
-    private String password;
-
-    @Email(message = "incorrect.login.error")
-    @NotBlank(message = "required.login.error")
-    @Size(max = 64, message = "long.login.error")
     private String login;
+
+    private String name;
+
+    private AuthType authType;
 
     private Set<RoleDto> roles;
 }

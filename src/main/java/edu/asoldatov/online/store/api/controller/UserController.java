@@ -13,8 +13,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -34,19 +32,6 @@ public class UserController {
                              @PageableDefault(sort = {"login"}, direction = Sort.Direction.DESC, size = 20) final Pageable pageable) {
         log.info("Get users by specification [{}]", specification);
         return userService.findAllBySpecification(specification, pageable);
-    }
-
-    @PostMapping("/")
-    public UserDto add(final @Valid @RequestBody UserDto userDto) {
-        log.info("Add user [{}]", userDto);
-        return userService.add(userDto);
-    }
-
-    @PutMapping("/{id}")
-    public UserDto update(final @Valid @RequestBody UserDto userDto,
-                          final @PathVariable Long id) {
-        log.info("Update user [{}] by id [{}]", userDto, id);
-        return userService.update(userDto, id);
     }
 
     @ResponseStatus(code = HttpStatus.NO_CONTENT)

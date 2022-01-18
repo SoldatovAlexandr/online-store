@@ -1,5 +1,7 @@
 package edu.asoldatov.online.store.mogel;
 
+import edu.asoldatov.online.store.common.AuthType;
+import edu.asoldatov.online.store.common.UserRoles;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,8 +26,12 @@ public class User {
     @Column(name = "login", unique = true, nullable = false)
     private String login;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth", unique = true, nullable = false)
+    private AuthType authType;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

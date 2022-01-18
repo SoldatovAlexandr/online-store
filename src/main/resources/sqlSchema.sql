@@ -13,9 +13,10 @@ create sequence if not exists hibernate_sequence
 --changeset asoldatov:users1
 create table if not exists users
 (
-    id       int8 default nextval('hibernate_sequence'::regclass) not null primary key unique,
-    login    varchar(64)                                          not null unique,
-    password varchar(256)                                         not null
+    id    int8 default nextval('hibernate_sequence'::regclass) not null primary key unique,
+    login varchar(64)                                          not null unique,
+    name  varchar(256)                                         not null,
+    auth  varchar(10)                                         not null
 );
 --rollback drop table users;
 --comment: Создана таблица users
@@ -68,10 +69,10 @@ values ('Classic'),
 --changeset asoldatov:file1
 CREATE TABLE IF NOT EXISTS file
 (
-    id         varchar(64) not null primary key unique,
-    name       varchar(64) not null,
-    type       varchar(64) not null,
-    data       oid         not null
+    id   varchar(64) not null primary key unique,
+    name varchar(64) not null,
+    type varchar(64) not null,
+    data oid         not null
 );
 --rollback drop table file;
 --comment: Создана таблица file
