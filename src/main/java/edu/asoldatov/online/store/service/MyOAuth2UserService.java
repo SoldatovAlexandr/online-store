@@ -48,7 +48,6 @@ public class MyOAuth2UserService implements OAuth2UserService<OAuth2UserRequest,
         this.userService = userService;
     }
 
-    //OAuth2LoginAuthenticationProvider
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         if (!StringUtils.hasText(userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri())) {

@@ -35,6 +35,11 @@ spring:
             scope: "email,profile"
 
 server:
+  servlet:
+    session:
+      cookie:
+        domain: "${COOKIE_DOMAIN}"
+        path: /
   port: 8080
 frontend:
   host: "${FRONTEND_URL}"
