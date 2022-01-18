@@ -28,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
+//https://console.cloud.google.com/apis/credentials?project=asoldatov-online-store
 
 @Service
 public class MyOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
