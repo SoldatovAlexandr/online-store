@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
@@ -27,10 +28,17 @@ public class AuthIntegrationController {
     @Value("${frontend.host}")
     private String frontendUrl;
 
+    @Value("${domain}")
+    private String domain;
+
     @GetMapping("/")
     public void toHomePage(@RequestHeader Map<String, String> headers,
                            HttpServletResponse response) throws IOException {
         log.info("Заголовки запроса [{}]", headers);
+        String jsesid = headers.get("cookie").split("JSESSIONID=")[1];
+        Cookie cookie = new Cookie("JSESSIONID", jsesid);
+        cookie.setDomain(domain);
+        response.addCookie(cookie);
         response.sendRedirect(frontendUrl + "/auth");
     }
 
