@@ -14,9 +14,10 @@ create sequence if not exists hibernate_sequence
 create table if not exists users
 (
     id    int8 default nextval('hibernate_sequence'::regclass) not null primary key unique,
-    login varchar(64)                                          not null unique,
+    login varchar(64)                                          not null,
     name  varchar(256)                                         not null,
-    auth  varchar(10)                                         not null
+    auth  varchar(10)                                          not null,
+    UNIQUE (login, auth)
 );
 --rollback drop table users;
 --comment: Создана таблица users

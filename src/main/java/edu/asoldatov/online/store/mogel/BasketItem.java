@@ -12,7 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "basket_item")
-public class BasketItem {
+public class BasketItem implements Comparable<BasketItem> {
 
     @Id
     @GeneratedValue(generator = "h_sequence")
@@ -30,4 +30,8 @@ public class BasketItem {
     @JoinColumn(name = "basket_id", nullable = false)
     private Basket basket;
 
+    @Override
+    public int compareTo(BasketItem o) {
+        return (int) (o.id - this.id);
+    }
 }

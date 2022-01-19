@@ -123,7 +123,7 @@ public class MyOAuth2UserService implements OAuth2UserService<OAuth2UserRequest,
         String name = (String) userAttributes.get("name");
 
         String login = (String) userAttributes.get(authType.getNameKey());
-        Optional<User> userOpt = userService.findByLogin(login);
+        Optional<User> userOpt = userService.findByLoginAndAuthType(login, authType);
         if (userOpt.isEmpty()) {
             User user = User.builder()
                     .authType(authType)

@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum AuthType {
 
     GOOGLE("google", "email"),
-    GITHUB("github", "login");
+    GITHUB("github", "login"),
+    FACEBOOK("facebook", "email");
 
     private final String type;
     private final String nameKey;

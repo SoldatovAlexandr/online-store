@@ -1,5 +1,6 @@
 package edu.asoldatov.online.store.service.impl;
 
+import edu.asoldatov.online.store.exception.NotFoundException;
 import edu.asoldatov.online.store.mogel.File;
 import edu.asoldatov.online.store.repository.FileRepository;
 import edu.asoldatov.online.store.service.FileService;
@@ -27,6 +28,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public File download(String id) {
-        return fileRepository.getOne(id);
+        return fileRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 }

@@ -17,7 +17,10 @@ public class BasketMapper {
     public BasketDto to(Basket basket) {
         return BasketDto.builder()
                 .totalAmount(calculateTotalAmount(basket))
-                .items(toItems(basket.getItems()))
+                .items(toItems(basket.getItems().stream()
+                        .filter(i -> i.getCount() > 0)
+                        .sorted()
+                        .collect(Collectors.toList())))
                 .build();
     }
 
@@ -35,6 +38,7 @@ public class BasketMapper {
                     .description(product.getDescription())
                     .isActive(product.isActive())
                     .count(basketItem.getCount())
+                    .image(product.getImage().getId())
                     .build();
         }).collect(Collectors.toList());
     }

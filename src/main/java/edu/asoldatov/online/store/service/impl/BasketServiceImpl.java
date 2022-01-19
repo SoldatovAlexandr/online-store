@@ -7,6 +7,7 @@ import edu.asoldatov.online.store.exception.NotFoundException;
 import edu.asoldatov.online.store.mogel.Basket;
 import edu.asoldatov.online.store.mogel.BasketItem;
 import edu.asoldatov.online.store.mogel.Product;
+import edu.asoldatov.online.store.repository.BasketItemRepository;
 import edu.asoldatov.online.store.repository.BasketRepository;
 import edu.asoldatov.online.store.repository.ProductRepository;
 import edu.asoldatov.online.store.service.BasketService;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class BasketServiceImpl implements BasketService {
 
     private final BasketRepository basketRepository;
+    private final BasketItemRepository basketItemRepository;
     private final ProductRepository productRepository;
     private final BasketMapper basketMapper;
 
@@ -38,6 +40,7 @@ public class BasketServiceImpl implements BasketService {
     @Override
     public BasketDto clear(Long id) {
         Basket basket = getBasketByUserId(id);
+        basketItemRepository.deleteByBasket(basket);
         basket.clear();
         basketRepository.save(basket);
         return basketMapper.to(basket);
@@ -51,18 +54,22 @@ public class BasketServiceImpl implements BasketService {
         Basket basket = getBasketByUserId(id);
         for (Product product : products) {
             BasketItem item = basket.getItems().stream()
-                    .filter(basketItem -> basketItem.getProduct().equals(product))
-                    .findFirst()
-                    .orElse(
-                            BasketItem.builder()
-                                    .basket(basket)
-                                    .product(product)
-                                    .build()
-                    );
+                    .filter(basketItem -> basketItem.getProduct().getId().equals(product.getId()))
+                    .findFirst().orElseGet(() -> addNew(basket, product));
             item.setCount(productCountByIdMap.get(product.getId()));
+            basketItemRepository.save(item);
         }
         basketRepository.save(basket);
         return basketMapper.to(basket);
+    }
+
+    private BasketItem addNew(Basket basket, Product product) {
+        BasketItem basketItem = BasketItem.builder()
+                .basket(basket)
+                .product(product)
+                .build();
+        basket.getItems().add(basketItem);
+        return basketItem;
     }
 
     private Map<Long, Long> getProductCountByIdMap(BasketDto basketDto) {
@@ -70,7 +77,7 @@ public class BasketServiceImpl implements BasketService {
         for (BasketItemDto item : basketDto.getItems()) {
             Long id = item.getId();
             Long count = item.getCount();
-            if (id != null && count != null && count > 0) {
+            if (id != null && count != null && count >= 0) {
                 productCountByIdMap.put(id, count);
             }
         }

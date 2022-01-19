@@ -25,4 +25,5 @@ public class BasketItemDto {
     private Integer yearOfPublication;
     private boolean isActive;
     private Long count;
+    private String image;
 }

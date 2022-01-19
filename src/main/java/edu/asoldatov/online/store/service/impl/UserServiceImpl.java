@@ -4,6 +4,7 @@ import edu.asoldatov.online.store.api.dto.RoleDto;
 import edu.asoldatov.online.store.api.dto.UserDto;
 import edu.asoldatov.online.store.api.mapper.RoleMapper;
 import edu.asoldatov.online.store.api.mapper.UserMapper;
+import edu.asoldatov.online.store.common.AuthType;
 import edu.asoldatov.online.store.common.UserRoles;
 import edu.asoldatov.online.store.exception.NotFoundException;
 import edu.asoldatov.online.store.mogel.Basket;
@@ -68,12 +69,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto find(String userName) {
-        User user = userRepository.findUserByLogin(userName)
+    public User find(String userName) {
+        return userRepository.findUserByLogin(userName)
                 .orElseThrow(() -> {
                     throw new UsernameNotFoundException("Пользователь не найден.");
                 });
-        return userMapper.to(user);
     }
 
     @Transactional
@@ -110,8 +110,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findByLogin(String login) {
-        return userRepository.findUserByLogin(login);
+    public Optional<User> findByLoginAndAuthType(String login, AuthType authType) {
+        return userRepository.findUserByLoginAndAuthType(login, authType);
     }
 
 }

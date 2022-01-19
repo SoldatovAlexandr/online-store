@@ -2,6 +2,8 @@ package edu.asoldatov.online.store.service;
 
 import edu.asoldatov.online.store.api.dto.RoleDto;
 import edu.asoldatov.online.store.api.dto.UserDto;
+import edu.asoldatov.online.store.common.AuthType;
+import edu.asoldatov.online.store.common.AuthUrl;
 import edu.asoldatov.online.store.mogel.User;
 import edu.asoldatov.online.store.repository.specification.UserSpecification;
 import org.springframework.data.domain.Page;
@@ -20,9 +22,9 @@ public interface UserService {
 
     User findById(Long id);
 
-    Optional<User> findByLogin(String login);
+    Optional<User> findByLoginAndAuthType(String login, AuthType authType);
 
-    UserDto find(String userName);
+    User find(String userName);
 
     RoleDto addAdminRole(Long id);
 

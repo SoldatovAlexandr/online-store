@@ -7,7 +7,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Log4j2
@@ -31,13 +30,13 @@ public class GenreController {
     }
 
     @PostMapping("/")
-    public GenreDto add(final @Valid @RequestBody GenreDto genreDto) {
+    public GenreDto add(final @RequestBody GenreDto genreDto) {
         log.info("Add genre [{}]", genreDto);
         return genreService.add(genreDto);
     }
 
     @PutMapping("/{id}")
-    public GenreDto update(final @Valid @RequestBody GenreDto genreDto,
+    public GenreDto update(final @RequestBody GenreDto genreDto,
                            final @PathVariable Long id) {
         log.info("Update genre [{}] by id [{}]", genreDto, id);
         return genreService.update(genreDto, id);

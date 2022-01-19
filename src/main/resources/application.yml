@@ -33,9 +33,12 @@ spring:
             client-id: "159071480763-ivtj3f4u2a3anct10e68ubn46v17vkqs.apps.googleusercontent.com"
             client-secret: "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"
             scope: "email,profile"
+          facebook:
+            client-id: "683357052671160"
+            client-secret: "6a7a9b426ce22db22a10b38efe0f230d"
+            scope: "email, public_profile"
 
 server:
   port: 8080
 frontend:
   host: "${FRONTEND_URL}"
-domain: "${COOKIE_DOMAIN}"

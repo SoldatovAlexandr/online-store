@@ -21,7 +21,7 @@ public class Basket {
     @Column(name = "id")
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "basket")
     private List<BasketItem> items;
 
     @ManyToOne(fetch = FetchType.LAZY)
